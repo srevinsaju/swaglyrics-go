@@ -12,9 +12,9 @@ import (
 // matches braces with feat included or text after -, also adds support for Bollywood songs by matching (From "<words>")
 
 var Brc = regexp.MustCompile(`([(\[](feat|ft|From|Feat|from "[^"]*")[^)\]]*[)\]]|- .*)`)
-var Aln = regexp.MustCompile(`[^ \-a-zA-Z0-9]+`)                                             // matches non space or - or alphanumeric characters
-var Spc = regexp.MustCompile(` *- *| +`)                                                     // matches one or more spaces
-var Wth = regexp.MustCompile(` *\(with ([^)]+)\)`)                                       // capture text after with
+var Aln = regexp.MustCompile(`[^ \-a-zA-Z0-9]+`)               // matches non space or - or alphanumeric characters
+var Spc = regexp.MustCompile(` *- *| +`)                       // matches one or more spaces
+var Wth = regexp.MustCompile(` *\(with ([^)]+)\)`)             // capture text after with
 var Nlt = regexp.MustCompile(`[^\x00-\x7F\x80-\xFF\p{Latin}]`) // match only latin characters,
 //var Nlt = regexp.MustCompile(`[]]`)
 var unsafeChar = []string{"/", "_", "!"}
@@ -58,5 +58,3 @@ func Stripper(song types.Song) string {
 	return urlData
 
 }
-
-
