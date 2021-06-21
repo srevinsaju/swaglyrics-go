@@ -42,7 +42,13 @@ func main() {
 			if err != nil {
 				return err
 			}
-			fmt.Println(lyrics)
+			lyrics = strings.Trim(lyrics, "\n\r ")
+			if lyrics == "" {
+				fmt.Printf("Couldn't get lyrics for %s by %s\n", track, artist)
+			} else {
+				fmt.Println(lyrics)
+			}
+
 			return nil
 		},
 	}
