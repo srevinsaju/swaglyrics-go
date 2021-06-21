@@ -34,7 +34,6 @@ func main() {
 				log.Fatalln("Please provide the track and artist names.")
 				return nil
 			}
-			fmt.Printf("Getting lyrics for %s by %s\n", track, artist)
 			lyrics, err := sl.GetLyrics(types.Song{
 				Track:  track,
 				Artist: artist,
@@ -45,6 +44,7 @@ func main() {
 			lyrics = strings.Trim(lyrics, "\n\r ")
 			if lyrics == "" {
 				fmt.Printf("Couldn't get lyrics for %s by %s\n", track, artist)
+				os.Exit(1)
 			} else {
 				fmt.Println(lyrics)
 			}
