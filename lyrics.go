@@ -4,15 +4,18 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/srevinsaju/swaglyrics-go/types"
+	"html"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 )
 
-// var tag = regexp.MustCompile("(?s)<.*?>")
+var tag = regexp.MustCompile("(?s)<.*?>")
+var br = regexp.MustCompile("<br/>")
 
 var httpClient = http.Client{
 	Timeout: ApiTimeout * time.Second,
@@ -75,52 +78,26 @@ func getLyrics(song types.Song) (string, error) {
 	var lyricsContainerHtml string
 	doc.Find(".lyrics").First().Each(func(i int, selection *goquery.Selection) {
 		lyricsContainerHtml = selection.Text()
-		// cleanedHtml := strings.Replace(html, "<br/>", "", -1)
-		// cleanedHtml = tag.ReplaceAllString(cleanedHtml, "")
-		//cleanedText := html.UnescapeString(cleanedHtml)
-		//return cleanedHtml
 	})
 	if lyricsContainerHtml == "" {
 
 		selector := doc.Find("div[class^='Lyrics__Container'], div[class*=' Lyrics__Container']")
-		lyricsContainerHtmlArray := make([]string,0, selector.Length())
-
+		lyricsBuilder := strings.Builder{}
 		selector.Each(func(i int, selection *goquery.Selection) {
-			lyricsContainerHtmlArray = append(lyricsContainerHtmlArray, selection.Text())
+			data, err := selection.Html()
+			if err != nil {
+				return
+			}
+			cleanedHtml := br.ReplaceAllString(data, "\n")
+			cleanedHtml = tag.ReplaceAllString(cleanedHtml, "")
+
+			cleanedHtml = html.UnescapeString(cleanedHtml)
+			lyricsBuilder.WriteString(cleanedHtml)
+			lyricsBuilder.WriteString("\n")
 		})
-		lyricsContainerHtml = strings.Join(lyricsContainerHtmlArray, "\n")
+		lyricsContainerHtml = lyricsBuilder.String()
 	}
 	return lyricsContainerHtml, nil
-
-
-	//geniusWebPageBytes, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	return "", err
-	//}
-	//geniusWebPage := string(geniusWebPageBytes[:])
-
-	//geniusHtml := soup.HTMLParse(geniusWebPage)
-	//lyricsPath := geniusHtml.Find("div", "class", "lyrics")
-	//if lyricsPath.Error == nil {
-	//	cleanedHtml := strings.Replace(lyricsPath.HTML(), "<br/>", "", -1)
-	//	cleanedHtml = tag.ReplaceAllString(cleanedHtml, "")
-	//	cleanedText := html.UnescapeString(cleanedHtml)
-	//	return strings.Trim(cleanedText, "\n\r "), nil
-	//} else {
-	/*	var lyricsPaths []string
-		lyricsPathDivs := geniusHtml.FindAll("div")
-
-		for i := range lyricsPathDivs {
-
-			if strings.HasPrefix(lyricsPathDivs[i].Attrs()["class"], "Lyrics__Container") {
-				cleanedHtml := strings.Replace(lyricsPathDivs[i].HTML(), "<br/>", "\n", -1)
-				cleanedHtml = tag.ReplaceAllString(cleanedHtml, "")
-				cleanedText := html.UnescapeString(cleanedHtml)
-				lyricsPaths = append(lyricsPaths, cleanedText)
-			}
-		}
-		return strings.Join(lyricsPaths, "\n"), nil
-	}*/
 }
 
 // GetLyrics fetches a song from the genius api
