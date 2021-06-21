@@ -1,8 +1,6 @@
 package swaglyrics_go
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/anaskhan96/soup"
 	"github.com/srevinsaju/swaglyrics-go/types"
@@ -10,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -18,12 +17,12 @@ import (
 var tag = regexp.MustCompile("(?s)<.*?>")
 
 var httpClient = http.Client{
-	Timeout: API_TIMEOUT * time.Second,
+	Timeout: ApiTimeout * time.Second,
 }
 
 func crawlGeniusWebPage(urlData string) (*http.Response, error) {
-	url := fmt.Sprintf("https://genius.com/%s-lyrics", urlData)
-	resp, err := httpClient.Get(url)
+	fetchUrl := fmt.Sprintf("https://genius.com/%s-lyrics", urlData)
+	resp, err := httpClient.Get(fetchUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +35,6 @@ func GetLyrics(song types.Song) (string, error) {
 	if strings.HasPrefix(urlData, "-") {
 		return "", InvalidSongError
 	}
-
 	// format the url with the url path
 	resp, err := crawlGeniusWebPage(urlData)
 	if err != nil {
@@ -44,20 +42,19 @@ func GetLyrics(song types.Song) (string, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		postBody, _ := json.Marshal(map[string]string{
-			"song":   song.Track,
-			"artist": song.Artist,
-		})
-		responseBody := bytes.NewBuffer(postBody)
+		form := url.Values{}
+		form.Add("song", song.Track)
+		form.Add("artist", song.Artist)
 
 		req, err := http.NewRequest(
 			"GET",
-			fmt.Sprintf("%s/stripper", BACKEND_URL),
-			responseBody,
+			fmt.Sprintf("%s/stripper", BackendUrl),
+			strings.NewReader(form.Encode()),
 		)
 		if err != nil {
 			return "", err
 		}
+		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 		resp, err = httpClient.Do(req)
 		if err != nil {
 			return "", err
