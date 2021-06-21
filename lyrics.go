@@ -29,8 +29,7 @@ func crawlGeniusWebPage(urlData string) (*http.Response, error) {
 	return resp, nil
 }
 
-// GetLyrics fetches a song from the genius api
-func GetLyrics(song types.Song) (string, error) {
+func getLyrics(song types.Song) (string, error) {
 	urlData := Stripper(song)
 	if strings.HasPrefix(urlData, "-") {
 		return "", InvalidSongError
@@ -97,4 +96,14 @@ func GetLyrics(song types.Song) (string, error) {
 		}
 		return strings.Join(lyricsPaths, "\n"), nil
 	}
+}
+
+// GetLyrics fetches a song from the genius api
+func GetLyrics(song types.Song) (string, error) {
+	lyrics, err := getLyrics(song)
+	if err != nil {
+		return fmt.Sprintf("Couldn't get lyrics for %s by %s", song.Track, song.Artist), err
+	}
+	lyrics = strings.Trim(lyrics, "\n\r ")
+	return lyrics, nil
 }
