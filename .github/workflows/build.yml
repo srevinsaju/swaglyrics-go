@@ -24,6 +24,9 @@ jobs:
         cd cmd/sl
         go build -ldflags "-s -w" .
         cd ../..
+        cd benchmark
+        go build -ldflags "-s -w" .
+        cd ..
 
 
     - name: Release Continuous
@@ -36,4 +39,5 @@ jobs:
         title: continuous
         files: |
           cmd/sl/sl
+          benchmark/benchmark
         repo_token: ${{ secrets.GITHUB_TOKEN }}
