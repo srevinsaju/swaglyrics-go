@@ -39,5 +39,5 @@ jobs:
         title: continuous
         files: |
           cmd/sl/sl
-          benchmark/benchmark
+
         repo_token: ${{ secrets.GITHUB_TOKEN }}
