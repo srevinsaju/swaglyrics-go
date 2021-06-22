@@ -58,3 +58,28 @@ func Stripper(song types.Song) string {
 	return urlData
 
 }
+
+
+func NormalizeArtist(artist string) string {
+
+	urlData := strings.Replace(artist, "&", ", ", -1)
+
+
+	for i := range unsafeChar {
+		urlData = strings.Replace(urlData, unsafeChar[i], " ", -1)
+	}
+	for i := range someChar {
+		urlData = strings.Replace(urlData, someChar[i], "", -1)
+	}
+
+	urlData = Nlt.ReplaceAllString(urlData, "")
+	urlData = unidecode.Unidecode(urlData)
+	urlData = Aln.ReplaceAllString(urlData, "")
+	urlData = Spc.ReplaceAllString(urlData, " ")
+	urlData = strings.Trim(urlData, " ")
+	if urlData == "" {
+		return artist
+	}
+	return urlData
+
+}
