@@ -31,7 +31,7 @@ I usually develop something that I can see helping me
 and other users in the same situation. ~~Packaged so I can
 first hand handle production-ready code to an extent and to make
 distribution and usage easier.~~ Used Go lang, because it makes package distribution
-very easy. Finally, I don't need to very about a million `pip` packages,
+very easy. Finally, I don't need to worry about a million `pip` packages,
 version conflicts, etc...
 
 
