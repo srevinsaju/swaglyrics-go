@@ -59,11 +59,9 @@ func Stripper(song types.Song) string {
 
 }
 
-
 func NormalizeArtist(artist string) string {
 
 	urlData := strings.Replace(artist, "&", ", ", -1)
-
 
 	for i := range unsafeChar {
 		urlData = strings.Replace(urlData, unsafeChar[i], " ", -1)

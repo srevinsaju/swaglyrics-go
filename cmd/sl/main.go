@@ -20,7 +20,7 @@ func input(r *bufio.Reader, msg string) (res string) {
 
 func main() {
 	app := &cli.App{
-		Name: "swaglyrics-go",
+		Name:  "swaglyrics-go",
 		Usage: "Get the lyrics for a song",
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "track", Usage: "Song title"},

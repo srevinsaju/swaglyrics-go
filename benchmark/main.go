@@ -1,7 +1,6 @@
 package main
 
 import (
-
 	"encoding/json"
 	"fmt"
 	sl "github.com/srevinsaju/swaglyrics-go"
@@ -12,6 +11,7 @@ import (
 	"strings"
 	"time"
 )
+
 var errored = 0
 var totalTime time.Duration = 0
 
@@ -20,7 +20,7 @@ type ArtistMeta struct {
 }
 
 type TrackMeta struct {
-	Name string `json:"name"`
+	Name    string       `json:"name"`
 	Artists []ArtistMeta `json:"artists"`
 }
 
@@ -32,13 +32,11 @@ type TopUS50 struct {
 	Items []Item `json:"items"`
 }
 
-
 func timeTrack(start time.Time, name string) {
 	elapsed := time.Since(start)
 	log.Printf("%s took %s", name, elapsed)
 	totalTime += elapsed
 }
-
 
 func GetLyrics(song types.Song, meta string) (string, error) {
 	defer timeTrack(time.Now(), meta)
@@ -48,7 +46,7 @@ func GetLyrics(song types.Song, meta string) (string, error) {
 
 func main() {
 
-	jsonFile := os.Args[len(os.Args) - 1]
+	jsonFile := os.Args[len(os.Args)-1]
 	// read our opened jsonFile as a byte array.
 	data, err := ioutil.ReadFile(jsonFile)
 	if err != nil {
@@ -75,11 +73,11 @@ func main() {
 	}
 
 	fmt.Printf(
-		"Successful for {%d}/50 cases.\n" +
-			"Total time {%s}.\n" +
+		"Successful for {%d}/50 cases.\n"+
+			"Total time {%s}.\n"+
 			"Avg. time {%s/50}s.\n",
-			50 - errored,
-			totalTime,
-			totalTime/50,
-		)
+		50-errored,
+		totalTime,
+		totalTime/50,
+	)
 }

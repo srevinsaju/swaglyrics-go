@@ -1,6 +1,6 @@
 package types
 
 type Song struct {
-	Track string
+	Track  string
 	Artist string
 }

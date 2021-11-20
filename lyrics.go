@@ -69,6 +69,14 @@ func getLyrics(song types.Song) (string, error) {
 			return "", err
 		}
 	}
+	if resp.StatusCode != 200 && strings.Contains(song.Artist, ",") {
+		// has multiple supporting artist
+		// let's try again with only the first artist
+		return getLyrics(types.Song{
+			Track:  song.Track,
+			Artist: strings.Split(song.Artist, ",")[0],
+		})
+	}
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
